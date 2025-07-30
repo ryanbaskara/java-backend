@@ -11,14 +11,14 @@ import com.ryanbaskara.learning.presentation.route.InstrumentRoute;
 import com.ryanbaskara.learning.presentation.route.UserRoute;
 import io.vertx.rxjava3.core.AbstractVerticle;
 import io.vertx.rxjava3.ext.web.Router;
-import io.vertx.rxjava3.jdbcclient.JDBCPool;
+import io.vertx.rxjava3.mysqlclient.MySQLPool;
 
 public class MainVerticle extends AbstractVerticle {
     @Override
     public void start() {
         Router router = Router.router(vertx);
 
-        JDBCPool pool = DatabaseConfig.connect(vertx);
+        MySQLPool pool = DatabaseConfig.createMysqlPool(vertx);
         UserRepository userRepository = new UserRepositoryImpl(pool);
         GetUsersUseCase getUsersUseCase = new GetUsersUseCaseImpl(userRepository);
 
