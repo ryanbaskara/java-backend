@@ -6,5 +6,6 @@ import io.vertx.rxjava3.ext.web.Router;
 public class UserRoute {
     public static void configure(Router router, UserHandler handler) {
         router.get("/users").handler(handler::getUsers);
+        router.post("/users").handler(handler::createUser);
     }
 }

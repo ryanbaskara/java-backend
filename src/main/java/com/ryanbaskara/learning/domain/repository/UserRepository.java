@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface UserRepository {
     Single<List<User>> getUsers();
+    Single<User> createUser(User user);
 }
