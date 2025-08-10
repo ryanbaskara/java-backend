@@ -27,7 +27,22 @@ public class UserRepositoryImpl implements UserRepository {
         return client
                 .query("SELECT * FROM users")
                 .rxExecute()
-                .map(rowSet -> mapToUserList(rowSet));
+                .map(this::mapToUserList);
+    }
+
+    @Override
+    public Single<User> getUserByID(long id) {
+        String query = "SELECT * FROM users WHERE id = ?";
+        return client.preparedQuery(query)
+                .rxExecute(Tuple.of(id))
+                .flatMap(rowSet -> {
+                    Row row = rowSet.iterator().hasNext() ? rowSet.iterator().next() : null;
+                    if (row == null) {
+                        return Single.error(new ClassNotFoundException(String.format("User ID: %d not found", id)));
+                    }
+                    User user = mapRowToUser(row);
+                    return Single.just(user);
+                });
     }
 
     @Override
@@ -47,17 +62,35 @@ public class UserRepositoryImpl implements UserRepository {
                 });
     }
 
+    @Override
+    public Single<Boolean> updateUser(User user) {
+        String query = "UPDATE users SET name = ?, email = ?, updated_at = ? WHERE id = ?";
+        return client.preparedQuery(query)
+                .rxExecute(Tuple.of(
+                        user.getName(),
+                        user.getEmail(),
+                        user.getUpdatedAt(),
+                        user.getId()
+                ))
+                .map(rows -> rows.rowCount() > 0);
+    }
+
     private List<User> mapToUserList(RowSet<Row> rows) {
         List<User> users = new ArrayList<>();
         for (Row row : rows) {
-            User user = new User();
-            user.setId(row.getLong("id"));
-            user.setName(row.getString("name"));
-            user.setEmail(row.getString("email"));
-            user.setCreatedAt(row.getLocalDateTime("created_at"));
-            user.setUpdatedAt(row.getLocalDateTime("updated_at"));
+            User user = mapRowToUser(row);
             users.add(user);
         }
         return users;
+    }
+
+    private User mapRowToUser(Row row) {
+        User user = new User();
+        user.setId(row.getLong("id"));
+        user.setName(row.getString("name"));
+        user.setEmail(row.getString("email"));
+        user.setCreatedAt(row.getLocalDateTime("created_at"));
+        user.setUpdatedAt(row.getLocalDateTime("updated_at"));
+        return user;
     }
 }

@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ryanbaskara.learning.application.usecase.CreateUserUseCaseImpl;
 import com.ryanbaskara.learning.application.usecase.GetUsersUseCaseImpl;
+import com.ryanbaskara.learning.application.usecase.UpdateUserUseCaseImpl;
 import com.ryanbaskara.learning.domain.usecase.CreateUserUseCase;
 import com.ryanbaskara.learning.domain.usecase.GetUsersUseCase;
+import com.ryanbaskara.learning.domain.usecase.UpdateUserUseCase;
 import com.ryanbaskara.learning.infrastructure.config.DatabaseConfig;
 import com.ryanbaskara.learning.infrastructure.repository.UserRepositoryImpl;
 import com.ryanbaskara.learning.domain.repository.UserRepository;
@@ -40,11 +42,12 @@ public class MainVerticle extends AbstractVerticle {
         UserRepository userRepository = new UserRepositoryImpl(pool);
         GetUsersUseCase getUsersUseCase = new GetUsersUseCaseImpl(userRepository);
         CreateUserUseCase createUserUseCase = new CreateUserUseCaseImpl(userRepository);
+        UpdateUserUseCase updateUserUseCase = new UpdateUserUseCaseImpl(userRepository);
 
         InstrumentHandler instrumentHandler = new InstrumentHandler();
         InstrumentRoute.configure(router, instrumentHandler);
 
-        UserHandler userHandler = new UserHandler(getUsersUseCase, createUserUseCase);
+        UserHandler userHandler = new UserHandler(getUsersUseCase, createUserUseCase, updateUserUseCase);
         UserRoute.configure(router, userHandler);
 
         Dotenv env = Dotenv.load();

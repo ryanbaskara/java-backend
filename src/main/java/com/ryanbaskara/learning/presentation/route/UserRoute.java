@@ -7,5 +7,6 @@ public class UserRoute {
     public static void configure(Router router, UserHandler handler) {
         router.get("/users").handler(handler::getUsers);
         router.post("/users").handler(handler::createUser);
+        router.patch("/users/:id").handler(handler::updateUser);
     }
 }
