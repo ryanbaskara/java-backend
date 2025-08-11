@@ -7,9 +7,6 @@ import com.ryanbaskara.learning.domain.usecase.UpdateUserUseCase;
 import com.ryanbaskara.learning.presentation.dto.CreateUserRequest;
 import com.ryanbaskara.learning.presentation.dto.UpdateUserRequest;
 import io.reactivex.rxjava3.disposables.Disposable;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava3.ext.web.RoutingContext;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
@@ -40,11 +37,7 @@ public class UserHandler {
         Disposable disposable = getUsersUseCase.execute()
                 .subscribe(
                         users -> {
-                            JsonArray result = new JsonArray();
-                            users.forEach(user -> result.add(JsonObject.mapFrom(user)));
-                            ctx.response()
-                                    .putHeader("content-type", "application/json")
-                                    .end(result.encode());
+                            ResponseHandler.success(ctx, users);
                         },
                         ctx::fail
                 );
@@ -71,10 +64,7 @@ public class UserHandler {
         createUserUseCase.execute(user)
                 .subscribe(
                         savedUser -> {
-                            ctx.response()
-                                    .setStatusCode(201)
-                                    .putHeader("Content-Type", "application/json")
-                                    .end(Json.encodePrettily(savedUser));
+                            ResponseHandler.success(ctx, savedUser);
                         },
                         ctx::fail
                 );
@@ -89,10 +79,7 @@ public class UserHandler {
         user.setEmail(request.getEmail());
         updateUserUseCase.execute(user).subscribe(
                 newUser -> {
-                    ctx.response()
-                            .setStatusCode(201)
-                            .putHeader("Content-Type", "application/json")
-                            .end(Json.encodePrettily(newUser));
+                    ResponseHandler.success(ctx, newUser);
                 },
                 ctx::fail
         );

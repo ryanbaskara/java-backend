@@ -19,12 +19,12 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
 
     @Override
     public Single<User> execute(User user) {
-        user.setUpdatedAt(LocalDateTime.now());
         return userRepository.getUserByID(user.getId())
                 .switchIfEmpty(Single.error(new UserNotFoundException(user.getId())))
                 .flatMap(existingUser -> {
                     existingUser.setEmail(user.getEmail());
                     existingUser.setName(user.getName());
+                    existingUser.setUpdatedAt(LocalDateTime.now());
                    return userRepository.updateUser(existingUser)
                            .flatMap(success -> {
                                if (success) {
