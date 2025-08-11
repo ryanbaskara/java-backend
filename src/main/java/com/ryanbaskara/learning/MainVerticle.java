@@ -12,6 +12,7 @@ import com.ryanbaskara.learning.domain.usecase.UpdateUserUseCase;
 import com.ryanbaskara.learning.infrastructure.config.DatabaseConfig;
 import com.ryanbaskara.learning.infrastructure.repository.UserRepositoryImpl;
 import com.ryanbaskara.learning.domain.repository.UserRepository;
+import com.ryanbaskara.learning.presentation.handler.GlobalExceptionHandler;
 import com.ryanbaskara.learning.presentation.handler.InstrumentHandler;
 import com.ryanbaskara.learning.presentation.handler.UserHandler;
 import com.ryanbaskara.learning.presentation.route.InstrumentRoute;
@@ -49,6 +50,7 @@ public class MainVerticle extends AbstractVerticle {
 
         UserHandler userHandler = new UserHandler(getUsersUseCase, createUserUseCase, updateUserUseCase);
         UserRoute.configure(router, userHandler);
+        router.route().failureHandler(GlobalExceptionHandler::handle);
 
         Dotenv env = Dotenv.load();
         int serverPort = Integer.parseInt(env.get("SERVER_PORT"));

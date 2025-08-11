@@ -2,6 +2,7 @@ package com.ryanbaskara.learning.infrastructure.repository;
 
 import com.ryanbaskara.learning.domain.model.User;
 import com.ryanbaskara.learning.domain.repository.UserRepository;
+import io.reactivex.rxjava3.core.Maybe;
 import io.reactivex.rxjava3.core.Single;
 import io.vertx.rxjava3.mysqlclient.MySQLClient;
 import io.vertx.rxjava3.mysqlclient.MySQLPool;
@@ -31,17 +32,18 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Single<User> getUserByID(long id) {
+    public Maybe<User> getUserByID(long id) {
         String query = "SELECT * FROM users WHERE id = ?";
         return client.preparedQuery(query)
                 .rxExecute(Tuple.of(id))
-                .flatMap(rowSet -> {
-                    Row row = rowSet.iterator().hasNext() ? rowSet.iterator().next() : null;
-                    if (row == null) {
-                        return Single.error(new ClassNotFoundException(String.format("User ID: %d not found", id)));
+                .flatMapMaybe(rowSet -> {
+                    if (!rowSet.iterator().hasNext()) {
+                        return Maybe.empty();
                     }
+
+                    Row row = rowSet.iterator().next();
                     User user = mapRowToUser(row);
-                    return Single.just(user);
+                    return Maybe.just(user);
                 });
     }
 

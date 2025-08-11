@@ -46,11 +46,7 @@ public class UserHandler {
                                     .putHeader("content-type", "application/json")
                                     .end(result.encode());
                         },
-                        error -> {
-                            ctx.response()
-                                    .setStatusCode(500)
-                                    .end(new JsonObject().put("error", error.getMessage()).encode());
-                        }
+                        ctx::fail
                 );
     }
 
@@ -80,11 +76,7 @@ public class UserHandler {
                                     .putHeader("Content-Type", "application/json")
                                     .end(Json.encodePrettily(savedUser));
                         },
-                        error -> {
-                            ctx.response()
-                                    .setStatusCode(500)
-                                    .end("Gagal menyimpan user: " + error.getMessage());
-                        }
+                        ctx::fail
                 );
     }
 
@@ -102,11 +94,7 @@ public class UserHandler {
                             .putHeader("Content-Type", "application/json")
                             .end(Json.encodePrettily(newUser));
                 },
-                error -> {
-                    ctx.response()
-                            .setStatusCode(500)
-                            .end("Gagal menyimpan user: " + error.getMessage());
-                }
+                ctx::fail
         );
     }
 }
