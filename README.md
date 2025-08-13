@@ -47,3 +47,7 @@ Simple backend service using java. Everything new knowledge can be documented he
 - Vert.x
 - Dotenv
 
+
+## Sources
+- https://github.com/ReactiveX/RxJava
+- https://www.youtube.com/@codiguard
