@@ -8,5 +8,9 @@ public class RxJavaDocs {
         CompletableDocs.start();
         FlowableDocs.start();
         HotColdObservableDocs.start();
+        DisposableDocs.start();
+        OperatorDocs.start();
+        TransformCombineDocs.start();
+        UtilityDocs.start();
     }
 }
