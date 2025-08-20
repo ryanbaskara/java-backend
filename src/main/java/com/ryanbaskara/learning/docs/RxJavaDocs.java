@@ -12,5 +12,8 @@ public class RxJavaDocs {
         OperatorDocs.start();
         TransformCombineDocs.start();
         UtilityDocs.start();
+        SubjectDocs.start();
+        CustomOperatorDocs.start();
+        ThreadingDocs.start();
     }
 }
