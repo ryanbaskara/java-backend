@@ -1,5 +1,6 @@
 package com.ryanbaskara.learning.application.usecase;
 
+import com.ryanbaskara.learning.domain.event.EventPublisher;
 import com.ryanbaskara.learning.domain.exception.UserNotFoundException;
 import com.ryanbaskara.learning.domain.model.User;
 import com.ryanbaskara.learning.domain.repository.UserRepository;
@@ -12,9 +13,11 @@ import java.time.LocalDateTime;
 public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
 
     private final UserRepository userRepository;
+    private final EventPublisher eventPublisher;
 
-    public UpdateUserUseCaseImpl(UserRepository userRepository) {
+    public UpdateUserUseCaseImpl(UserRepository userRepository, EventPublisher eventPublisher) {
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -27,11 +30,11 @@ public class UpdateUserUseCaseImpl implements UpdateUserUseCase {
                     existingUser.setUpdatedAt(LocalDateTime.now());
                    return userRepository.updateUser(existingUser)
                            .flatMap(success -> {
-                               if (success) {
-                                   return Single.just(existingUser);
-                               } else {
+                               if (!success) {
                                    return Single.error(new IllegalStateException("Update failed"));
                                }
+                               eventPublisher.publish("users", String.valueOf(user.getId()), user.toString());
+                               return Single.just(existingUser);
                            });
                 });
     }

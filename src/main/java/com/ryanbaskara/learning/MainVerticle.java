@@ -7,10 +7,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.ryanbaskara.learning.application.usecase.CreateUserUseCaseImpl;
 import com.ryanbaskara.learning.application.usecase.GetUsersUseCaseImpl;
 import com.ryanbaskara.learning.application.usecase.UpdateUserUseCaseImpl;
+import com.ryanbaskara.learning.domain.event.EventPublisher;
 import com.ryanbaskara.learning.domain.usecase.CreateUserUseCase;
 import com.ryanbaskara.learning.domain.usecase.GetUsersUseCase;
 import com.ryanbaskara.learning.domain.usecase.UpdateUserUseCase;
 import com.ryanbaskara.learning.infrastructure.config.DatabaseConfig;
+import com.ryanbaskara.learning.infrastructure.kafka.KafkaEventPublisher;
 import com.ryanbaskara.learning.infrastructure.repository.UserRepositoryImpl;
 import com.ryanbaskara.learning.domain.repository.UserRepository;
 import com.ryanbaskara.learning.presentation.handler.GlobalExceptionHandler;
@@ -38,9 +40,12 @@ public class MainVerticle extends AbstractVerticle {
 
         MySQLPool pool = DatabaseConfig.createMysqlPool(vertx);
         UserRepository userRepository = new UserRepositoryImpl(pool);
+
+        EventPublisher eventPublisher = new KafkaEventPublisher(vertx);
+
         GetUsersUseCase getUsersUseCase = new GetUsersUseCaseImpl(userRepository);
         CreateUserUseCase createUserUseCase = new CreateUserUseCaseImpl(userRepository);
-        UpdateUserUseCase updateUserUseCase = new UpdateUserUseCaseImpl(userRepository);
+        UpdateUserUseCase updateUserUseCase = new UpdateUserUseCaseImpl(userRepository, eventPublisher);
 
         InstrumentHandler instrumentHandler = new InstrumentHandler();
         InstrumentRoute.configure(router, instrumentHandler);

@@ -15,6 +15,7 @@ dependencies {
     implementation 'io.vertx:vertx-web:4.5.0'
     implementation 'io.vertx:vertx-rx-java3:4.5.1'
     implementation 'io.vertx:vertx-mysql-client:4.5.1'
+    implementation("io.vertx:vertx-kafka-client:4.5.1")
     implementation 'mysql:mysql-connector-java:8.0.33'
 
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
