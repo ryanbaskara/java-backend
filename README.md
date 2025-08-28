@@ -46,7 +46,11 @@ Simple backend service using java. Everything new knowledge can be documented he
 - MySQL
 - Vert.x
 - Dotenv
+- RxJava
+- Kafka
 
+## RxJava Documentation
+You can refer [this](src/main/java/com/ryanbaskara/learning/docs/RxJava.md) for the detail of RxJava docs.
 
 ## Sources
 - https://github.com/ReactiveX/RxJava
